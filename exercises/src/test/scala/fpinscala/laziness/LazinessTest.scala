@@ -274,7 +274,7 @@ class LazinessTest extends FlatSpec with Matchers {
   }
 
   "tails Stream(1, 2, 3)" should "return valid sub streams" in {
-    Stream(1, 2, 3).tails.toList.map(_.toList) shouldEqual List(List(1, 2, 3), List(2, 3), List(3), Nil)
+    Stream(1, 2, 3).tails.map(_.toList).toList shouldEqual List(List(1, 2, 3), List(2, 3), List(3), Nil)
   }
 
   "hasSubsequence Stream(2, 3, 4)" should "return true for Stream(1, 2, 3, 4, 5)" in {
@@ -287,5 +287,9 @@ class LazinessTest extends FlatSpec with Matchers {
 
   it should "return true for Stream(2, 3, 4, 5)" in {
     Stream(2, 3, 4, 5).hasSubsequence(Stream(2, 3, 4)) shouldBe true
+  }
+
+  "scanRight Stream(1, 2, 3)" should "return (6, 5, 3, 0)" in {
+    Stream(1, 2, 3).scanRight(0)(_ + _).toList shouldEqual List(6, 5, 3, 0)
   }
 }

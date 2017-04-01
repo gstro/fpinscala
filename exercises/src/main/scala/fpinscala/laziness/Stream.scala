@@ -25,10 +25,11 @@ trait Stream[+A] {
 
   def take(n: Int): Stream[A] = this match {
     case Cons(h, t) if n > 0 => cons(h(), t().take(n - 1))
-    case _                    => empty
+    case _                   => empty
   }
 
-  def drop(n: Int): Stream[A] = this match {
+  @annotation.tailrec
+  final def drop(n: Int): Stream[A] = this match {
     case Cons(_, t) => if (n > 0) t().drop(n - 1) else this
     case _          => empty
   }
@@ -105,8 +106,11 @@ trait Stream[+A] {
       case _              => None
     }.append(Stream(empty))
 
-  def hasSubsequence[A](s: Stream[A]): Boolean =
+  def hasSubsequence[B](s: Stream[B]): Boolean =
     tails.exists(_.startsWith(s))
+
+  def scanRight[B >: A](initial: B)(scanner: (B, => B) => B): Stream[B] =
+    tails.map(_.foldRight(initial)(scanner))
 
 }
 case object Empty extends Stream[Nothing]
